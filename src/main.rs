@@ -1,5 +1,8 @@
 use rand::Rng;
-use std::io;
+use std::{
+    io::{self, Error},
+    num::ParseIntError,
+};
 
 fn main() {
     let min = 0;
@@ -14,7 +17,13 @@ fn main() {
 
         let mut input = String::new();
         io::stdin().read_line(&mut input).expect("invalid input");
-        let res = parse_string(&input);
+        let res = match parse_string(&input) {
+            Ok(number) => number,
+            Err(_) => {
+                print!("Input is not a valid number, ");
+                continue;
+            }
+        };
 
         if res == x {
             println!("Nice! You found it with {} guesses!", attempt);
@@ -31,8 +40,8 @@ fn main() {
     }
 }
 
-fn parse_string(str: &str) -> i32 {
-    str.trim().parse().unwrap()
+fn parse_string(str: &str) -> Result<i32, ParseIntError> {
+    str.trim().parse()
 }
 
 fn get_random_number(min: Option<i32>, max: Option<i32>) -> i32 {
